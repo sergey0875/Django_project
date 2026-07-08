@@ -15,7 +15,7 @@ from pathlib import Path
 
 load_dotenv(override=True)
 
-from django.conf.global_settings import STATICFILES_DIRS
+from django.conf.global_settings import STATICFILES_DIRS, MEDIA_ROOT, MEDIA_URL
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -80,7 +80,7 @@ WSGI_APPLICATION = "config.wsgi.application"
 
 DATABASES = {
     "default": {
-        "ENGINE": 'django.db.backends.postgresql',
+        "ENGINE": 'django.db.backends.postgresql_psycopg2',
         "NAME": os.getenv('NAME'),
         "USER": os.getenv('USER'),
         "PASSWORD": os.getenv('PASSWORD'),
@@ -126,3 +126,6 @@ USE_TZ = True
 STATIC_URL = "static/"
 STATICFILES_DIRS = [BASE_DIR / 'static',]
 
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR/'media'
