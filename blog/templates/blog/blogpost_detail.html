@@ -1,0 +1,41 @@
+{% extends 'blog/blogpost_list.html' %}
+{% load my_tags %}
+
+{% block content %}
+ <div class="row mb-2">
+    <div class="col-md-6">
+
+        <div class="row g-0 border rounded overflow-hidden flex-md-row mb-4 shadow-sm h-md-250 position-relative">
+
+
+            <div class="col p-4 d-flex flex-column position-static">
+                <strong class="d-inline-block mb-2 text-primary-emphasis"></strong>
+                <h3 class="mb-0">{{ object.title }}</h3>
+                <p class="card-text mb-auto">{{ object.content }}</p>
+
+                <a href="#" class="icon-link gap-1 icon-link-hover">
+                    <svg class="bi" aria-hidden="true"><use xlink:href="#chevron-right"></use></svg>
+                </a>
+            </div>
+
+
+            <div class="col-auto d-none d-lg-block p-4">
+
+                <img src="{{ object.preview | media_filter }}" alt="{{ object.title }}" class="img-fluid mb-2">
+
+                <div class="d-block mb-2">
+                    <span>👁 Просмотров: {{ blog.views_count }}</span>
+                </div>
+
+
+                <div class="btn-group">
+                    <a href="{% url 'blog:home' %}" class="btn btn-sm btn-secondary">Назад</a>
+
+                    <a href="{% url 'blog:blog_update' blog.pk %}" class="btn btn-sm btn-primary">Редактировать</a>
+                </div>
+            </div>
+
+        </div>
+    </div>
+ </div>
+{% endblock %}
