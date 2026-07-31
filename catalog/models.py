@@ -34,6 +34,7 @@ class Product(models.Model):
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="дата создания")
     updated_at = models.DateTimeField(auto_now_add=True, verbose_name="дата изменения")
 
+
     def __str__(self):
         return self.name
 
