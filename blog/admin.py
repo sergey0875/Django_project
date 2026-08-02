@@ -1,5 +1,4 @@
 from django.contrib import admin
-from blog.apps import BlogConfig
 from blog.models import BlogPost
 
 
