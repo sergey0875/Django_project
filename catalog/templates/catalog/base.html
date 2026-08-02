@@ -104,6 +104,7 @@
 </head>
 
 <body>
+
     <svg xmlns="http://www.w3.org/2000/svg" class="d-none">
         <symbol id="check2" viewBox="0 0 16 16">
             <path d="M13.854 3.646a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L6.5 10.293l6.646-6.647a.5.5 0 0 1 .708 0z"></path>
@@ -194,12 +195,30 @@
         </div>
     </header>
     <main>
+        {% include 'catalog/header.html' %}
         <section class="py-5 text-center container">
             <div class="row py-lg-5">
                 <div class="col-lg-6 col-md-8 mx-auto">
                     <h1 class="fw-light">Маркетплейс skypro</h1>
                     <p class="lead text-body-secondary">Товары на любой вкус и выбор.</p>
-                    <p> <a href="{% url 'catalog:product_create'%}" class="btn btn-primary my-2">Добавить продукт</a>
+
+                    {% if user.is_authenticated %}
+
+                    <a href="{% url 'catalog:product_create'%}" class="btn btn-primary my-2">Добавить продукт</a>
+
+                    <form method="post" action="{% url 'users:logout' %}" class="d-inline">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-primary my-2">Выйти</button>
+                        <a href="{% url 'users:users_update'%}"  class="btn btn-primary my-2">Редактировать профиль</a>
+                    </form>
+
+                    {% else %}
+
+                    <a href="{% url 'users:login'%}"  class="btn btn-primary my-2">Вход</a>
+                    <a href="{% url 'users:register'%}"  class="btn btn-primary my-2">Регистрация</a>
+
+                    {% endif %}
+
                 </div>
             </div>
         </section>
