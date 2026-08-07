@@ -15,20 +15,21 @@
                                 <h6 class=card-price">{{ object.purchase_price }}</h6>
                                 <div class="d-flex justify-content-between align-items-center">
                                     <div class="d-flex gap-2 mt-4 justify-content-center" >
-                                       <a class="btn btn-primary" href="{% url 'catalog:product_list'%}" role="button">Назад</a>
+                                       <a class="btn btn-primary btn-sm" href="{% url 'catalog:product_list'%}" role="button">Назад</a>
                                         {% if object.owner == user or perms.catalog.can_unpublish_product or user.is_staff %}
-                                        <a href="{% url 'catalog:product_update' object.pk %}" class="btn btn-primary">Редактировать</a>
+                                        <a href="{% url 'catalog:product_update' object.pk %}" class="btn btn-primary btn-sm">Редактировать</a>
                                         {% endif %}
-                                        {% if 'catalog.can_unpublish_product' in perms or user == product.owner %}
+                                        {% if perms.catalog.can_unpublish_product or user.is_staff or user == object.owner %}
+
                                         <form action="{% url 'catalog:product_unpublish' object.pk %}" method="post" class="d-inline">
                                             {% csrf_token %}
-                                            <button type="submit" class="btn btn-warning" onclick="return confirm('Отменить публикацию?');">
+                                            <button type="submit" class="btn btn-warning btn-sm" onclick="return confirm('Отменить публикацию?');">
                                                 Снять с публикации
                                             </button>
 
                                         </form>
                                     {% endif %} {% if object.owner == user or perms.catalog.can_unpublish_product or user.is_staff %}
-                                    <a href="{% url 'catalog:product_delete' object.pk %}" class="btn btn-danger">Удалить</a>
+                                    <a href="{% url 'catalog:product_delete' object.pk %}" class="btn btn-danger btn-sm">Удалить</a>
                                     {% endif %}
                                     </div>
                             </div>
