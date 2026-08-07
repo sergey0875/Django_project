@@ -2,7 +2,6 @@ from django.core.exceptions import PermissionDenied
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.utils.translation.trans_real import catalog
 from django.views import View
 from django.views.generic import ListView, DetailView, TemplateView, DeleteView, CreateView, UpdateView
 from .forms import ProductForm
@@ -44,7 +43,6 @@ class ProductDeleteView(LoginRequiredMixin, DeleteView):
 class ProductCreateView(LoginRequiredMixin, CreateView):
     model = Product
     form_class = ProductForm
-  #  fields = ('name', 'description', 'image', 'purchase_price', 'category') чтобы не забыть, заменили на форму
     success_url = reverse_lazy('catalog:product_list')
 
     def form_valid(self, form):
