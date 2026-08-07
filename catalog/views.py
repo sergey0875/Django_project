@@ -1,3 +1,5 @@
+from django.core.cache import cache
+
 from django.core.exceptions import PermissionDenied
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse_lazy
@@ -6,12 +8,17 @@ from django.views import View
 from django.views.generic import ListView, DetailView, TemplateView, DeleteView, CreateView, UpdateView
 from .forms import ProductForm
 from django.http import HttpResponseForbidden
-
 from catalog.models import Product
+from django.views.decorators.cache import cache_page
+from django.utils.decorators import method_decorator
+from .services import get_products_by_category
+
 
 
 class ContactsView(TemplateView):
     template_name = 'contacts.html'
+
+
 
 
 class ProductListView(ListView):
@@ -21,8 +28,23 @@ class ProductListView(ListView):
         return Product.objects.filter(is_published=True)
 
 
+    def get_queryset(self):
+        """Низкоуровневое кэширование"""
+
+        queryset = cache.get('my_queryset')
+        if not queryset:
+           queryset = super().get_queryset()
+           cache.set('my_queryset', queryset, 60*15)
+        return queryset
+
+
+
+
+@method_decorator(cache_page(60*15), name='dispatch')
 class ProductDetailView(DetailView):
     model = Product
+
+
 
 
 class ProductDeleteView(LoginRequiredMixin, DeleteView):
@@ -40,6 +62,7 @@ class ProductDeleteView(LoginRequiredMixin, DeleteView):
 
         raise PermissionDenied("У вас нет прав на удаление этого продукта.")
 
+
 class ProductCreateView(LoginRequiredMixin, CreateView):
     model = Product
     form_class = ProductForm
@@ -50,6 +73,8 @@ class ProductCreateView(LoginRequiredMixin, CreateView):
         form.instance.owner = self.request.user
         return super().form_valid(form)
 
+
+
 class ProductUpdateView(LoginRequiredMixin, UpdateView):
     model = Product
     form_class = ProductForm
@@ -58,11 +83,11 @@ class ProductUpdateView(LoginRequiredMixin, UpdateView):
     def get_object(self, queryset=None):
         obj = super().get_object(queryset)
 
-
-        if obj.owner != self.request.user:
+        if obj.owner != self.request.user and not self.request.user.is_staff:
             raise PermissionDenied("Вы не являетесь владельцем этого продукта.")
 
         return obj
+
 
 
 
@@ -76,3 +101,27 @@ class UnpublishProductView(LoginRequiredMixin, View):
         product.is_published =False
         product.save()
         return redirect('catalog:product_list')
+
+
+
+
+
+
+class CategoryProductsListView(TemplateView):
+    """
+    Классовое представление для отображения продуктов в категории.
+    """
+    template_name = 'catalog/category_products.html'
+
+    def get_context_data(self, **kwargs):
+
+        context = super().get_context_data(**kwargs)
+        category_id = self.kwargs.get('category_id')
+
+        category, products = get_products_by_category(category_id)
+
+        context['category'] = category
+        context['products'] = products
+
+        return context
+
